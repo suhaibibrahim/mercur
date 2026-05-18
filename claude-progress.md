@@ -2,13 +2,13 @@
 
 ## Current Verified State
 
-- **Repository root**: `/Users/viktorholik/Desktop/mercur`
-- **Current branch**: `canary` (up to date with `origin/canary`)
-- **Current version**: `2.1.2-canary.5`
+- **Repository root**: `/workspace`
+- **Current branch**: `cursor/designbridge-mvp-roadmap-cbd8` (tracks `origin/cursor/designbridge-mvp-roadmap-cbd8`)
+- **Current version**: `2.1.2`
 - **Standard startup path**: `bun install && bun run dev`
 - **Standard verification path**: `bun run build`, `bun run lint` (oxlint), `bun run test:integration:http -- <pattern>`
-- **Highest priority unfinished work**: finalize the lint/tooling refactor (oxlint migration, template-sync removal, meilisearch test removal) currently staged in the working tree, then verify and commit.
-- **Current blocker**: none -- working tree has uncommitted refactor (see Session 2 below) that has not yet been verified end-to-end.
+- **Highest priority unfinished work**: continue DesignBridge MVP conversion with `designbridge-commission-waiver` (0% for first 3 months, then 15%).
+- **Current blocker**: none.
 
 ## Session Log
 
@@ -123,11 +123,36 @@
 
 - See `feature_list.json` → `drop-medusa-global-unique-constraints.evidence`.
 
+### Session 5: 2026-05-18 -- DesignBridge MVP conversion start
+
+**Goal**: Convert the linked DesignBridge MVP brief into a durable Mercur implementation roadmap and ship the first narrow creator-marketplace behavior.
+
+#### Completed
+
+- Added `docs/DESIGNBRIDGE_MVP.md` with Phase 1 scope, existing Mercur fit, missing gaps, and verification commands.
+- Added DesignBridge feature-tracker entries for the pricing floor, commission waiver, Privacy Mode, 48-hour release window, disputes, and weekly payouts.
+- Enforced the Phase 1 $10 USD minimum on vendor product variant prices in `packages/core/src/api/vendor/products/validators.ts`.
+- Added integration coverage in `integration-tests/http/product/vendor/product.spec.ts` for rejecting a USD creator deliverable priced at 999 cents.
+
+#### Verification
+
+- `bun run lint && bun run build` passed after implementation.
+- `DB_USERNAME=postgres DB_PASSWORD=postgres DB_HOST=127.0.0.1 DB_PORT=5432 DATABASE_URL=postgres://postgres:postgres@127.0.0.1:5432/mercur MEDUSA_FF_SELLER_REGISTRATION=true bun run test:integration:http -- product/vendor/product.spec.ts` passed.
+
+#### Environment note
+
+- Cursor Cloud image lacked Bun and PostgreSQL. Bun was installed with the official installer; PostgreSQL 16 was installed with `apt`; Medusa's test runner required `DB_*` credentials in addition to `DATABASE_URL`.
+
+#### Next best action
+
+1. Implement `designbridge-commission-waiver`: 0% seller commission during the first 3 months and 15% after the waiver.
+2. Decide whether the waiver is modeled as generated seller-scoped commission rules, a time-aware commission matcher, or a scheduled rule transition.
+
 ## Required Artifacts (status)
 
-- `claude-progress.md` -- this file (updated 2026-05-15, Session 4).
-- `feature_list.json` -- present at repo root. Currently tracks one feature; updated this session.
-- `session-handoff.md` -- not present; not yet needed.
+- `claude-progress.md` -- this file (updated 2026-05-18, Session 5).
+- `feature_list.json` -- present at repo root. Tracks the completed DesignBridge price-floor slice plus remaining MVP work.
+- `session-handoff.md` -- present.
 
 ## Definition Of Done (reminder)
 
