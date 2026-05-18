@@ -3,11 +3,11 @@
 ## Current Verified State
 
 - **Repository root**: `/workspace`
-- **Current branch**: `cursor/designbridge-mvp-roadmap-cbd8` (tracks `origin/cursor/designbridge-mvp-roadmap-cbd8`)
+- **Current branch**: `cursor/designbridge-commission-waiver-2178` (tracks `origin/cursor/designbridge-commission-waiver-2178`)
 - **Current version**: `2.1.2`
 - **Standard startup path**: `bun install && bun run dev`
 - **Standard verification path**: `bun run build`, `bun run lint` (oxlint), `bun run test:integration:http -- <pattern>`
-- **Highest priority unfinished work**: continue DesignBridge MVP conversion with `designbridge-commission-waiver` (0% for first 3 months, then 15%).
+- **Highest priority unfinished work**: continue DesignBridge MVP conversion with `designbridge-privacy-mode` ($5 surcharge and anonymized creator-facing assets).
 - **Current blocker**: none.
 
 ## Session Log
@@ -147,6 +147,31 @@
 
 1. Implement `designbridge-commission-waiver`: 0% seller commission during the first 3 months and 15% after the waiver.
 2. Decide whether the waiver is modeled as generated seller-scoped commission rules, a time-aware commission matcher, or a scheduled rule transition.
+
+### Session 6: 2026-05-18 -- DesignBridge commission waiver
+
+**Goal**: Convert the DesignBridge launch commission model into Mercur's commission calculation path.
+
+#### Completed
+
+- Added seller-age based DesignBridge item commission logic in `packages/core/src/modules/commission/service.ts`.
+- Extended commission calculation item seller context with optional `created_at` and allowed policy-derived commission lines to use `commission_rate_id: null`.
+- Selected `items.product.seller.created_at` in `refresh-order-commission-lines` so checkout-created order commission lines apply the same 0%/15% rule.
+- Updated `integration-tests/http/cart/store/cart-commission.spec.ts` with coverage for current-waiver 0%, post-waiver 15%, and checkout-generated commission lines for both states.
+- Updated `docs/DESIGNBRIDGE_MVP.md` and `feature_list.json` evidence for `designbridge-commission-waiver`.
+
+#### Verification
+
+- `bun run lint && bun run build` passed.
+- `DB_USERNAME=postgres DB_PASSWORD=postgres DB_HOST=127.0.0.1 DB_PORT=5432 DATABASE_URL=postgres://postgres:postgres@127.0.0.1:5432/mercur MEDUSA_FF_SELLER_REGISTRATION=true bun run test:integration:http -- cart/store/cart-commission.spec.ts` passed.
+
+#### Environment note
+
+- PostgreSQL was installed but not running at first; `sudo service postgresql start` made `127.0.0.1:5432` reachable before the passing integration run.
+
+#### Next best action
+
+1. Implement `designbridge-privacy-mode`: anonymized creator-facing assets and a $5 platform surcharge.
 
 ## Required Artifacts (status)
 

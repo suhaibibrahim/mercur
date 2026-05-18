@@ -40,8 +40,11 @@ DesignBridge is a creator marketplace surface inside Designar.ai. Clients buy pr
 
 The vendor product API now rejects USD creator deliverables below $10. This makes the Phase 1 pricing floor a server-side rule, not only a UI recommendation.
 
+The commission calculation path now applies the launch model for creator item sales: 0% commission for a seller's first 3 months, then the DesignBridge 15% default. Checkout-generated order commission lines use the same seller-age rule.
+
 ## Verification
 
 - `bun run lint`
 - `bun run build`
 - `bun run test:integration:http -- product/vendor/product.spec.ts`
+- `bun run test:integration:http -- cart/store/cart-commission.spec.ts`

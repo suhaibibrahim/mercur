@@ -59,14 +59,22 @@
             "area": "commission",
             "title": "DesignBridge launch commission waiver and 15% default",
             "user_visible_behavior": "New creators keep 100% of transaction revenue for their first 3 months, then the platform automatically keeps 15% on completed transactions.",
-            "status": "not_started",
+            "status": "passing",
             "verification": [
                 "Create a new seller and confirm matching commission is 0% during the waiver period.",
                 "Simulate or configure a seller older than 3 months and confirm matching commission is 15%.",
                 "Complete a cart and confirm commission lines reflect the active rate."
             ],
-            "evidence": {},
-            "notes": "Mercur already supports commission rates and seller-scoped rules, but needs time-based matching or scheduled automation for the 3-month waiver."
+            "evidence": {
+                "source": "packages/core/src/modules/commission/service.ts",
+                "workflow": "packages/core/src/workflows/commission/workflows/refresh-order-commission-lines.ts",
+                "test": "integration-tests/http/cart/store/cart-commission.spec.ts",
+                "implemented_at": "2026-05-18",
+                "lint_and_build": "`bun run lint && bun run build` passed after the implementation.",
+                "integration": "`DB_USERNAME=postgres DB_PASSWORD=postgres DB_HOST=127.0.0.1 DB_PORT=5432 DATABASE_URL=postgres://postgres:postgres@127.0.0.1:5432/mercur MEDUSA_FF_SELLER_REGISTRATION=true bun run test:integration:http -- cart/store/cart-commission.spec.ts` passed.",
+                "environment_note": "PostgreSQL was not initially running; `sudo service postgresql start` made 127.0.0.1:5432 reachable before the passing integration run."
+            },
+            "notes": "The commission service derives a DesignBridge item commission from `product.seller.created_at`: 0% until the seller is 3 months old, then 15%. The order commission refresh workflow selects `items.product.seller.created_at` so checkout-generated commission lines use the same rule. The synthetic DesignBridge rates store `commission_rate_id: null` because they are policy-derived rather than admin-authored commission-rate records."
         },
         {
             "id": "designbridge-privacy-mode",

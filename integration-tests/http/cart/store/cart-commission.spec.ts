@@ -15,8 +15,16 @@ import { generatePublishableKey, generateStoreHeaders } from "../../../helpers/c
 
 jest.setTimeout(120000)
 
+type KnexTable = {
+  where: (filter: { id: string }) => {
+    update: (values: { created_at: Date }) => Promise<unknown>
+  }
+}
+
+type KnexConnection = (tableName: string) => KnexTable
+
 medusaIntegrationTestRunner({
-  testSuite: ({ getContainer, api, dbConnection }) => {
+  testSuite: ({ getContainer, api }) => {
     describe("Store - Cart Commission Lines", () => {
       let appContainer: MedusaContainer
       let commissionService: any
@@ -247,7 +255,11 @@ medusaIntegrationTestRunner({
       }
 
       const setSellerCreatedAt = async (createdAt: Date) => {
-        await dbConnection("seller")
+        const knex = appContainer.resolve<KnexConnection>(
+          ContainerRegistrationKeys.PG_CONNECTION
+        )
+
+        await knex("seller")
           .where({ id: seller.id })
           .update({ created_at: createdAt })
       }
