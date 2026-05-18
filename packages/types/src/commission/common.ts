@@ -76,7 +76,10 @@ export interface CommissionCalculationItemLine {
     tags?: { id: string }[]
     categories?: { id: string }[]
     type_id?: string
-    seller?: { id: string }
+    seller?: {
+      id: string
+      created_at?: Date | string | null
+    }
   }
 }
 
@@ -126,7 +129,7 @@ export interface CommissionCalculationContext {
 
 export interface CreateCommissionLineDTO {
   item_id: string
-  commission_rate_id: string
+  commission_rate_id: string | null
   code: string
   rate: number
   amount: number
