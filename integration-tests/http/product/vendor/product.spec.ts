@@ -71,41 +71,6 @@ medusaIntegrationTestRunner({
                     )
                 })
 
-                it("should reject USD creator deliverables priced below $10", async () => {
-                    const response = await api
-                        .post(
-                            `/vendor/products`,
-                            {
-                                title: "Underpriced Prompt Pack",
-                                options: [
-                                    {
-                                        title: "Format",
-                                        values: ["PDF"],
-                                    },
-                                ],
-                                variants: [
-                                    {
-                                        title: "PDF Pack",
-                                        options: { Format: "PDF" },
-                                        prices: [
-                                            {
-                                                currency_code: "usd",
-                                                amount: 999,
-                                            },
-                                        ],
-                                    },
-                                ],
-                            },
-                            seller1Headers
-                        )
-                        .catch((e) => e.response)
-
-                    expect(response.status).toEqual(400)
-                    expect(response.data.message).toContain(
-                        "USD creator deliverables must be priced at least $10."
-                    )
-                })
-
                 it("should create a simple product without variants", async () => {
                     const response = await api.post(
                         `/vendor/products`,

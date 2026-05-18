@@ -12,11 +12,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
-    "@medusajs/dashboard": "2.13.4",
     "eslint": "^9.39.2",
     "globals": "^17.0.0",
-    "i18next": "^26.2.0",
-    "lodash": "^4.18.1",
     "oxlint": "^1.64.0",
     "prettier": "^3.7.4",
     "turbo": "^2.7.4",

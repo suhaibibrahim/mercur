@@ -11,7 +11,6 @@ import { AdminGetProductsParams } from "@medusajs/medusa/api/admin/products/vali
 import { AdminGetProductVariantsParams } from "@medusajs/medusa/api/admin/product-variants/validators"
 
 const statusEnum = z.nativeEnum(ProductStatus)
-const DESIGNBRIDGE_USD_PRICE_FLOOR = 1000
 
 export type VendorGetProductParamsType = z.infer<typeof VendorGetProductParams>
 export const VendorGetProductParams = createSelectParams()
@@ -53,26 +52,13 @@ export const VendorGetProductOptionsParams = createFindParams({
 export type VendorCreateVariantPriceType = z.infer<
   typeof VendorCreateVariantPrice
 >
-export const VendorCreateVariantPrice = z
-  .object({
-    currency_code: z.string(),
-    amount: z.number(),
-    min_quantity: z.number().nullish(),
-    max_quantity: z.number().nullish(),
-    rules: z.record(z.string(), z.string()).optional(),
-  })
-  .superRefine((price, ctx) => {
-    if (
-      price.currency_code.toLowerCase() === "usd" &&
-      price.amount < DESIGNBRIDGE_USD_PRICE_FLOOR
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["amount"],
-        message: "USD creator deliverables must be priced at least $10.",
-      })
-    }
-  })
+export const VendorCreateVariantPrice = z.object({
+  currency_code: z.string(),
+  amount: z.number(),
+  min_quantity: z.number().nullish(),
+  max_quantity: z.number().nullish(),
+  rules: z.record(z.string(), z.string()).optional(),
+})
 
 export type VendorCreateProductOptionType = z.infer<typeof CreateProductOption> & AdditionalData
 export const CreateProductOption = z.object({

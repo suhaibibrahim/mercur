@@ -215,7 +215,6 @@ export function mercurDashboardPlugin(pluginConfig: MercurConfig): Vite.Plugin {
                         "virtual:mercur/components",
                         "virtual:mercur/menu-items",
                         "virtual:mercur/i18n",
-                        "@medusajs/dashboard",
                     ],
                     include: [
                         "react",
@@ -225,6 +224,7 @@ export function mercurDashboardPlugin(pluginConfig: MercurConfig): Vite.Plugin {
                         "react-i18next",
                         "i18next",
                         "@medusajs/ui",
+                        "@medusajs/dashboard",
                         "@mercurjs/client",
                         "@tanstack/react-query",
                     ],
