@@ -36,7 +36,7 @@
             "area": "vendor/products",
             "title": "DesignBridge MVP pricing floor for creator deliverables",
             "user_visible_behavior": "Creators cannot publish USD-priced deliverables below the DesignBridge $10 minimum, preventing race-to-the-bottom pricing for prompt packs, templates, made-to-order services, and brand kits.",
-            "status": "in_progress",
+            "status": "passing",
             "verification": [
                 "1. Submit `POST /vendor/products` as a seller with a USD variant price of 999.",
                 "2. Confirm the API rejects the request with HTTP 400 and the message `USD creator deliverables must be priced at least $10.`",
@@ -46,7 +46,10 @@
             "evidence": {
                 "source": "packages/core/src/api/vendor/products/validators.ts",
                 "test": "integration-tests/http/product/vendor/product.spec.ts",
-                "test_run_pending": "Run `bun run test:integration:http -- product/vendor/product.spec.ts` after the first DesignBridge slice is committed."
+                "implemented_at": "2026-05-18",
+                "lint_and_build": "`bun run lint && bun run build` passed after the implementation.",
+                "integration": "`DB_USERNAME=postgres DB_PASSWORD=postgres DB_HOST=127.0.0.1 DB_PORT=5432 DATABASE_URL=postgres://postgres:postgres@127.0.0.1:5432/mercur MEDUSA_FF_SELLER_REGISTRATION=true bun run test:integration:http -- product/vendor/product.spec.ts` passed.",
+                "environment_note": "Cursor Cloud image did not include Bun or PostgreSQL. Bun was installed with the official installer, PostgreSQL 16 was installed with apt, and the Medusa test runner required DB_* credentials in addition to DATABASE_URL."
             },
             "notes": "This is the first narrow conversion slice from docs/DESIGNBRIDGE_MVP.md. It intentionally enforces the Phase 1 USD floor only on creator/vendor product pricing; broader multi-currency equivalents can be added when DesignBridge pricing expands beyond the MVP USD model."
         },
