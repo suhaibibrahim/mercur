@@ -1,6 +1,7 @@
 import {
   BuildingStorefront,
   Buildings,
+  ChartPie,
   CogSixTooth,
   CreditCardRefresh,
   CurrencyDollar,
@@ -280,6 +281,11 @@ const useCoreRoutes = (): Omit<INavItem, "pathname">[] => {
         //   to: "/draft-orders",
         // },
       ],
+    },
+    {
+      icon: <ChartPie />,
+      label: t("designBridge.domain"),
+      to: "/designbridge",
     },
     {
       icon: <Tag />,
