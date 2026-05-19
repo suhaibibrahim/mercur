@@ -3439,6 +3439,232 @@
     "product-type": "Product Type",
     "product-update": "Product Update"
   },
+  "designBridge": {
+    "domain": "DesignBridge",
+    "hero": {
+      "badge": "POC demo data",
+      "launchStatus": "Creator marketplace live",
+      "phase": "Phase 1 MVP",
+      "title": "DesignBridge creator marketplace",
+      "description": "A Designar.ai surface where verified creators sell AI-assisted prompt packs, templates, brand kits, and made-to-order design work with transparent payment and privacy workflows.",
+      "primaryAction": "Preview marketplace",
+      "secondaryAction": "Onboard creator",
+      "proofPoints": {
+        "creators": {
+          "label": "First cohort",
+          "value": "10 concierge creators"
+        },
+        "dispute": {
+          "label": "Dispute rule",
+          "value": "50 / 50 manual split"
+        },
+        "payout": {
+          "label": "Payout cadence",
+          "value": "Weekly Sunday"
+        },
+        "privacy": {
+          "label": "GCC trust feature",
+          "value": "$5 Privacy Mode"
+        }
+      }
+    },
+    "stats": {
+      "activeCreators": {
+        "label": "Active creators",
+        "value": "25",
+        "hint": "10 live, 15 invited from TikTok and Instagram"
+      },
+      "monthlyGmv": {
+        "label": "Monthly GMV",
+        "value": "$11.2K",
+        "hint": "Realistic month-1 demo target"
+      },
+      "creatorPlan": {
+        "label": "Creator plan MRR",
+        "value": "$380",
+        "hint": "20 creators at $19 per month"
+      },
+      "designarUsers": {
+        "label": "Designar funnel",
+        "value": "21,310",
+        "hint": "Existing users exposed to the marketplace CTA"
+      }
+    },
+    "creatorsSection": {
+      "title": "Featured creator storefronts",
+      "description": "Warm Arabic AI creators with real audience signals, publishable offers, and payment-ready storefronts."
+    },
+    "creators": {
+      "noura": {
+        "initials": "NA",
+        "name": "Noura Al Harbi",
+        "handle": "@noura.ai.design",
+        "location": "Riyadh, Saudi Arabia",
+        "audience": "184K followers",
+        "service": "Luxury prompt packs",
+        "specialty": "Arabic calligraphy, perfume campaigns, and premium social posts",
+        "rating": "4.9",
+        "price": "$29+",
+        "conversion": "6.8%"
+      },
+      "faris": {
+        "initials": "FS",
+        "name": "Faris Studio",
+        "handle": "@faris.generative",
+        "location": "Doha, Qatar",
+        "audience": "92K followers",
+        "service": "AI-assisted brand kits",
+        "specialty": "Logo systems, color palettes, and launch decks for GCC startups",
+        "rating": "4.8",
+        "price": "$180+",
+        "conversion": "5.4%"
+      },
+      "lina": {
+        "initials": "LM",
+        "name": "Lina Motion Lab",
+        "handle": "@lina.motion.ai",
+        "location": "Dubai, UAE",
+        "audience": "137K followers",
+        "service": "Short-form video packs",
+        "specialty": "AI reels, product reveals, and creator tutorials",
+        "rating": "4.7",
+        "price": "$120+",
+        "conversion": "4.9%"
+      }
+    },
+    "status": {
+      "waiver": "0% waiver",
+      "proCreator": "Pro creator"
+    },
+    "labels": {
+      "privacyMode": "Privacy Mode",
+      "orders": "Orders",
+      "rating": "Rating",
+      "conversion": "Conversion",
+      "privacyReady": "Privacy ready",
+      "privacyUnavailable": "Standard assets",
+      "price": "Price",
+      "escrow": "Escrow",
+      "reviewWindow": "Review window",
+      "enabled": "Enabled",
+      "notEnabled": "Not enabled"
+    },
+    "modelSection": {
+      "title": "Business model cards",
+      "description": "Revenue rules from the MVP brief represented as demo-ready operating assumptions."
+    },
+    "model": {
+      "waiver": {
+        "title": "Launch waiver",
+        "value": "0%",
+        "description": "Creators keep the full transaction amount for the first 3 months."
+      },
+      "commission": {
+        "title": "Post-launch commission",
+        "value": "15%",
+        "description": "Platform fee starts after the waiver and remains below Fiverr's 20% cut."
+      },
+      "privacy": {
+        "title": "Privacy Mode surcharge",
+        "value": "$5",
+        "description": "Client-paid trust feature for sensitive Gulf market briefs."
+      },
+      "subscription": {
+        "title": "Creator AI toolkit",
+        "value": "$19/mo",
+        "description": "1,500 marketplace credits plus analytics and future matching priority."
+      }
+    },
+    "servicesSection": {
+      "title": "Service catalog",
+      "description": "Creator-set pricing with the $10 minimum floor already reflected."
+    },
+    "services": {
+      "promptPack": {
+        "title": "Ramadan campaign prompt pack",
+        "creator": "Noura Al Harbi",
+        "type": "Prompt pack",
+        "price": "$19",
+        "sold": "86 sold",
+        "margin": "$2.85 platform"
+      },
+      "brandKit": {
+        "title": "Boutique cafe brand kit",
+        "creator": "Faris Studio",
+        "type": "Brand kit",
+        "price": "$220",
+        "sold": "14 sold",
+        "margin": "$33 platform"
+      },
+      "wedding": {
+        "title": "Private wedding invitation visuals",
+        "creator": "Noura Al Harbi",
+        "type": "Made-to-order",
+        "price": "$180 + $5 privacy",
+        "sold": "22 sold",
+        "margin": "$32 platform"
+      },
+      "video": {
+        "title": "AI product reveal reel",
+        "creator": "Lina Motion Lab",
+        "type": "Video pack",
+        "price": "$140",
+        "sold": "31 sold",
+        "margin": "$21 platform"
+      }
+    },
+    "briefsSection": {
+      "title": "Live brief pipeline",
+      "description": "Escrow, 48-hour review, and Privacy Mode states shown with realistic order data."
+    },
+    "briefs": {
+      "qatar": {
+        "client": "Qatar Airways innovation team",
+        "title": "Premium destination concept frames",
+        "creator": "Faris Studio",
+        "reviewWindow": "31h left"
+      },
+      "wedding": {
+        "client": "Private family event",
+        "title": "Wedding portrait invitation suite",
+        "creator": "Noura Al Harbi",
+        "reviewWindow": "Delivering today"
+      },
+      "cafe": {
+        "client": "Majlis Cafe Riyadh",
+        "title": "Arabic menu sticker set",
+        "creator": "Lina Motion Lab",
+        "reviewWindow": "48h after delivery"
+      }
+    },
+    "stages": {
+      "inReview": "Client review",
+      "creatorWorking": "Creator working",
+      "escrowFunded": "Escrow funded"
+    },
+    "flowSection": {
+      "title": "Client to creator trust flow",
+      "description": "The POC makes the operational model visible for demos without introducing the Phase 2 matching engine yet."
+    },
+    "flow": {
+      "brief": {
+        "title": "AI refines the brief",
+        "description": "Clients start from Designar output or upload a brief; AI clarifies scope and expected files."
+      },
+      "creator": {
+        "title": "Creator accepts delivery",
+        "description": "The creator storefront owns quality while using Designar tools transparently."
+      },
+      "review": {
+        "title": "48-hour review",
+        "description": "Clients approve, dispute, or auto-release after the review window expires."
+      },
+      "release": {
+        "title": "Weekly payout",
+        "description": "Stripe Connect batches eligible creator payouts every Sunday above $20."
+      }
+    }
+  },
   "stores": {
     "domain": "Stores",
     "handleTooltip": "The handle is used as the URL slug for the store. Leave empty to auto-generate from the name.",

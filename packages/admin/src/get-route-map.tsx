@@ -71,6 +71,14 @@ export function getRouteMap({
                 lazy: () => import("./pages/home"),
               },
               {
+                path: "/designbridge",
+                errorElement: <ErrorBoundary />,
+                handle: {
+                  breadcrumb: () => t("designBridge.domain"),
+                },
+                lazy: () => import("./pages/designbridge"),
+              },
+              {
                 path: "/products",
                 errorElement: <ErrorBoundary />,
                 handle: {
