@@ -3,7 +3,7 @@
 ## Current Verified State
 
 - **Repository root**: `/workspace`
-- **Current branch**: `cursor/designbridge-commission-waiver-2178` (tracks `origin/cursor/designbridge-commission-waiver-2178`)
+- **Current branch**: `cursor/designbridge-demo-poc-2fce` (tracks `origin/cursor/designbridge-demo-poc-2fce`)
 - **Current version**: `2.1.2`
 - **Standard startup path**: `bun install && bun run dev`
 - **Standard verification path**: `bun run build`, `bun run lint` (oxlint), `bun run test:integration:http -- <pattern>`
@@ -173,9 +173,38 @@
 
 1. Implement `designbridge-privacy-mode`: anonymized creator-facing assets and a $5 platform surcharge.
 
+### Session 7: 2026-05-19 -- DesignBridge demo POC
+
+**Goal**: Build a demo-ready DesignBridge surface inside the admin dashboard and fill it with realistic fake creator-marketplace data.
+
+#### Completed
+
+- Added `/designbridge` as a protected admin dashboard route with breadcrumb and sidebar navigation.
+- Added the DesignBridge POC page in `packages/admin/src/pages/designbridge/`, including hero metrics, featured creator storefronts, business model cards, service catalog, live brief pipeline, and the client-to-creator trust flow.
+- Added English translation keys for all DesignBridge demo copy.
+
+#### Verification
+
+- Baseline `bun run build` passed before implementation after `bun install`.
+- `bun run lint` passed with 0 errors and the existing warning baseline.
+- `bun run build` passed after implementation.
+- `bunx oxlint "packages/admin/src/pages/designbridge/designbridge.tsx" "packages/admin/src/components/layout/main-layout/main-layout.tsx" "packages/admin/src/get-route-map.tsx"` passed with 0 warnings and 0 errors.
+- `bun --filter @mercurjs/admin build` passed.
+- `VITE_MERCUR_BACKEND_URL=http://localhost:9000 bunx vite build` passed for `apps/admin-test`.
+- Manual production-preview browser walkthrough passed at `http://localhost:7000/designbridge` using `admin@designbridge.test` / `supersecret`; recorded `/opt/cursor/artifacts/designbridge_demo_poc_walkthrough.mp4`.
+
+#### Environment note
+
+- Root `bun run dev` failed because `apps/api` could not resolve the `mercurjs` binary. Manual verification used `bunx medusa develop` for the API and `vite preview` for the built admin app.
+- `redis-server` was unavailable; Medusa used its fake Redis instance during manual verification.
+
+#### Next best action
+
+1. Continue `designbridge-privacy-mode`: anonymized creator-facing assets and a $5 platform surcharge.
+
 ## Required Artifacts (status)
 
-- `claude-progress.md` -- this file (updated 2026-05-18, Session 5).
+- `claude-progress.md` -- this file (updated 2026-05-19, Session 7).
 - `feature_list.json` -- present at repo root. Tracks the completed DesignBridge price-floor slice plus remaining MVP work.
 - `session-handoff.md` -- present.
 

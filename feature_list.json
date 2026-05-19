@@ -136,6 +136,31 @@
             ],
             "evidence": {},
             "notes": "Mercur currently supports payout creation and Stripe transfers, but DesignBridge needs batching, threshold accounting, and schedule control."
+        },
+        {
+            "id": "designbridge-demo-poc",
+            "priority": 8,
+            "area": "admin/designbridge",
+            "title": "Demo-ready DesignBridge creator marketplace POC",
+            "user_visible_behavior": "Operators can open a DesignBridge admin dashboard surface filled with realistic fake creator, service, brief, revenue, Privacy Mode, and payout/review data for investor and stakeholder demos.",
+            "status": "passing",
+            "verification": [
+                "Open `/designbridge` in the admin dashboard after logging in.",
+                "Confirm the sidebar item and breadcrumb show DesignBridge.",
+                "Confirm the hero metrics, featured creator storefronts, business model cards, service catalog, live brief pipeline, and trust flow render with fake demo data.",
+                "Run the admin build/lint checks."
+            ],
+            "evidence": {
+                "source": "packages/admin/src/pages/designbridge/designbridge.tsx",
+                "route": "packages/admin/src/get-route-map.tsx",
+                "navigation": "packages/admin/src/components/layout/main-layout/main-layout.tsx",
+                "translations": "packages/admin/src/i18n/translations/en.json",
+                "implemented_at": "2026-05-19",
+                "lint": "`bun run lint` passed with 0 errors and existing warnings; touched files passed `bunx oxlint` with 0 warnings and 0 errors.",
+                "build": "`bun run build`, `bun --filter @mercurjs/admin build`, and `VITE_MERCUR_BACKEND_URL=http://localhost:9000 bunx vite build` passed.",
+                "manual": "Production-preview browser walkthrough passed at `http://localhost:7000/designbridge`; demo video recorded at `/opt/cursor/artifacts/designbridge_demo_poc_walkthrough.mp4`."
+            },
+            "notes": "This is a static POC surface for demonstration. It intentionally does not create new backend domains for briefs, creator subscriptions, Privacy Mode processing, disputes, or payout scheduling."
         }
     ]
 }
