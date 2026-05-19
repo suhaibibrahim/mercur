@@ -31,6 +31,7 @@ const orderFields = [
   "items.product.tags.id",
   "items.product.type_id",
   "items.product.seller.id",
+  "items.product.seller.created_at",
   "items.adjustments.*",
   "shipping_methods.*",
   "shipping_methods.total",

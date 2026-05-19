@@ -9,6 +9,7 @@ import {
 
 import {
   CommissionCalculationContext,
+  CommissionCalculationItemLine,
   CommissionLineDTO,
   CommissionRateType,
   CommissionRateTarget,
@@ -18,6 +19,56 @@ import {
 } from "@mercurjs/types"
 
 import { CommissionRate, CommissionRule, CommissionLine } from "./models"
+
+const DESIGNBRIDGE_WAIVER_COMMISSION_RATE = 0
+const DESIGNBRIDGE_POST_WAIVER_COMMISSION_RATE = 15
+const DESIGNBRIDGE_COMMISSION_WAIVER_MONTHS = 3
+
+type CommissionCalculationSeller = NonNullable<
+  NonNullable<CommissionCalculationItemLine["product"]>["seller"]
+>
+
+type EffectiveCommissionRate = {
+  id: string | null
+  code: string
+  type: CommissionRateType
+  value: number
+  min_amount: number | null
+  include_tax: boolean
+}
+
+const getDesignBridgeCommissionRate = (
+  seller?: CommissionCalculationSeller
+): EffectiveCommissionRate | null => {
+  if (!seller?.created_at) {
+    return null
+  }
+
+  const createdAt = new Date(seller.created_at)
+  if (Number.isNaN(createdAt.getTime())) {
+    return null
+  }
+
+  const waiverEndsAt = new Date(createdAt)
+  waiverEndsAt.setUTCMonth(
+    waiverEndsAt.getUTCMonth() + DESIGNBRIDGE_COMMISSION_WAIVER_MONTHS
+  )
+
+  const isInWaiver = Date.now() < waiverEndsAt.getTime()
+
+  return {
+    id: null,
+    code: isInWaiver
+      ? "DESIGNBRIDGE_LAUNCH_WAIVER"
+      : "DESIGNBRIDGE_DEFAULT_15",
+    type: CommissionRateType.PERCENTAGE,
+    value: isInWaiver
+      ? DESIGNBRIDGE_WAIVER_COMMISSION_RATE
+      : DESIGNBRIDGE_POST_WAIVER_COMMISSION_RATE,
+    min_amount: null,
+    include_tax: false,
+  }
+}
 
 class CommissionModuleService extends MedusaService({
   CommissionRate,
@@ -102,35 +153,37 @@ class CommissionModuleService extends MedusaService({
         }
       }
 
-      if (!matchedRate) {
+      const effectiveRate = getDesignBridgeCommissionRate(product?.seller) ?? matchedRate
+
+      if (!effectiveRate) {
         continue
       }
 
       // Calculate base amount (include tax if specified)
       let baseAmount = item.subtotal
-      if (matchedRate.include_tax && item.tax_total) {
+      if (effectiveRate.include_tax && item.tax_total) {
         baseAmount = MathBN.add(item.subtotal, item.tax_total)
       }
 
       // Calculate commission amount using MathBN
       let amount
-      if (matchedRate.type === CommissionRateType.PERCENTAGE) {
-        amount = MathBN.div(MathBN.mult(baseAmount, matchedRate.value), 100)
+      if (effectiveRate.type === CommissionRateType.PERCENTAGE) {
+        amount = MathBN.div(MathBN.mult(baseAmount, effectiveRate.value), 100)
       } else {
-        amount = matchedRate.value
+        amount = effectiveRate.value
       }
 
       // Apply minimum commission if set
-      if (matchedRate.min_amount !== null && MathBN.lt(amount, matchedRate.min_amount)) {
-        amount = matchedRate.min_amount
+      if (effectiveRate.min_amount !== null && MathBN.lt(amount, effectiveRate.min_amount)) {
+        amount = effectiveRate.min_amount
       }
 
       commissionLines.push({
         item_id: item.id,
-        code: matchedRate.code,
-        rate: matchedRate.value,
+        code: effectiveRate.code,
+        rate: effectiveRate.value,
         amount: MathBN.convert(amount).toNumber(),
-        commission_rate_id: matchedRate.id,
+        commission_rate_id: effectiveRate.id,
       })
     }
 

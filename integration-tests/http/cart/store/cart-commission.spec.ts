@@ -15,6 +15,14 @@ import { generatePublishableKey, generateStoreHeaders } from "../../../helpers/c
 
 jest.setTimeout(120000)
 
+type KnexTable = {
+  where: (filter: { id: string }) => {
+    update: (values: { created_at: Date }) => Promise<unknown>
+  }
+}
+
+type KnexConnection = (tableName: string) => KnexTable
+
 medusaIntegrationTestRunner({
   testSuite: ({ getContainer, api }) => {
     describe("Store - Cart Commission Lines", () => {
@@ -246,6 +254,16 @@ medusaIntegrationTestRunner({
         return response.data.cart
       }
 
+      const setSellerCreatedAt = async (createdAt: Date) => {
+        const knex = appContainer.resolve<KnexConnection>(
+          ContainerRegistrationKeys.PG_CONNECTION
+        )
+
+        await knex("seller")
+          .where({ id: seller.id })
+          .update({ created_at: createdAt })
+      }
+
       describe("1. Basic Item Commission", () => {
         it("1.1 should apply percentage-based item commission and calculate correct amount", async () => {
           // Create 10% commission rate
@@ -307,6 +325,61 @@ medusaIntegrationTestRunner({
           expect(commissionLines[0].code).toEqual("ITEM_5_FIXED")
           expect(commissionLines[0].rate).toEqual(500)
           expect(commissionLines[0].amount).toEqual(500) // Fixed $5 (500 cents)
+        })
+      })
+
+      describe("1.5 DesignBridge Launch Commission", () => {
+        it("1.5.1 should waive item commission during a seller's first three months", async () => {
+          const commissionLines = await commissionService.getCommissionLines({
+            currency_code: "usd",
+            items: [
+              {
+                id: "item_designbridge_waiver",
+                subtotal: 10000,
+                product: {
+                  id: product.id,
+                  seller: {
+                    id: seller.id,
+                    created_at: new Date(),
+                  },
+                },
+              },
+            ],
+          })
+
+          expect(commissionLines).toHaveLength(1)
+          expect(commissionLines[0].code).toEqual("DESIGNBRIDGE_LAUNCH_WAIVER")
+          expect(commissionLines[0].rate).toEqual(0)
+          expect(commissionLines[0].amount).toEqual(0)
+          expect(commissionLines[0].commission_rate_id).toBeNull()
+        })
+
+        it("1.5.2 should apply the 15% DesignBridge default after the waiver expires", async () => {
+          const fourMonthsAgo = new Date()
+          fourMonthsAgo.setUTCMonth(fourMonthsAgo.getUTCMonth() - 4)
+
+          const commissionLines = await commissionService.getCommissionLines({
+            currency_code: "usd",
+            items: [
+              {
+                id: "item_designbridge_default",
+                subtotal: 10000,
+                product: {
+                  id: product.id,
+                  seller: {
+                    id: seller.id,
+                    created_at: fourMonthsAgo,
+                  },
+                },
+              },
+            ],
+          })
+
+          expect(commissionLines).toHaveLength(1)
+          expect(commissionLines[0].code).toEqual("DESIGNBRIDGE_DEFAULT_15")
+          expect(commissionLines[0].rate).toEqual(15)
+          expect(commissionLines[0].amount).toEqual(1500)
+          expect(commissionLines[0].commission_rate_id).toBeNull()
         })
       })
 
@@ -1136,18 +1209,7 @@ medusaIntegrationTestRunner({
           expect(shippingLine?.amount).toEqual(300) // 15% of $20 = $3 (300 cents)
         })
 
-        it("10.2 should create commission lines linked to order line items after checkout", async () => {
-          // Create 10% item commission rate
-          await commissionService.createCommissionRates({
-            name: "Order Item Commission",
-            code: "ORDER_ITEM_10",
-            type: CommissionRateType.PERCENTAGE,
-            target: CommissionRateTarget.ITEM,
-            value: 10,
-            is_enabled: true,
-            priority: 0,
-          })
-
+        it("10.2 should create launch-waiver commission lines after checkout", async () => {
           // Create cart and complete checkout flow
           // Find the $100 variant (Small) by SKU to ensure correct variant
           const variant100 = product.variants.find((v: any) => v.sku === "COMM-TEST-S")
@@ -1200,9 +1262,9 @@ medusaIntegrationTestRunner({
 
           // Verify commission line details
           const commissionLine = itemWithCommission.commission_lines[0]
-          expect(commissionLine.code).toEqual("ORDER_ITEM_10")
-          expect(commissionLine.rate).toEqual(10)
-          expect(commissionLine.amount).toEqual(1000) // 10% of $100 = $10 (1000 cents)
+          expect(commissionLine.code).toEqual("DESIGNBRIDGE_LAUNCH_WAIVER")
+          expect(commissionLine.rate).toEqual(0)
+          expect(commissionLine.amount).toEqual(0)
         })
 
         it("10.3 should apply correct rate in complex override hierarchy and calculate amount", async () => {
@@ -1263,6 +1325,55 @@ medusaIntegrationTestRunner({
           expect(commissionLines[0].code).toEqual("SELLER_VIP_6_COMPLEX")
           expect(commissionLines[0].rate).toEqual(6)
           expect(commissionLines[0].amount).toEqual(600) // 6% of $100 = $6 (600 cents)
+        })
+
+        it("10.4 should create 15% DesignBridge commission lines after the waiver expires", async () => {
+          const fourMonthsAgo = new Date()
+          fourMonthsAgo.setUTCMonth(fourMonthsAgo.getUTCMonth() - 4)
+          await setSellerCreatedAt(fourMonthsAgo)
+
+          const variant100 = product.variants.find((v: any) => v.sku === "COMM-TEST-S")
+          const cart = await createCart()
+          await addItemToCart(cart.id, variant100.id, 1) // $100
+          await updateCartWithAddress(cart.id)
+          await addShippingMethodToCart(cart.id, shippingOption.id)
+
+          const paymentCollectionResponse = await api.post(
+            `/store/payment-collections`,
+            { cart_id: cart.id },
+            storeHeaders
+          )
+          const paymentCollection = paymentCollectionResponse.data.payment_collection
+
+          await api.post(
+            `/store/payment-collections/${paymentCollection.id}/payment-sessions`,
+            { provider_id: "pp_system_default" },
+            storeHeaders
+          )
+
+          const completeResponse = await api.post(
+            `/store/carts/${cart.id}/complete`,
+            {},
+            storeHeaders
+          )
+
+          expect(completeResponse.data.type).toEqual("order_group")
+          const orderGroupId = completeResponse.data.order_group.id
+
+          const { data: [orderGroup] } = await query.graph({
+            entity: "order_group",
+            fields: ["id", "orders.*", "orders.items.*", "orders.items.commission_lines.*"],
+            filters: { id: orderGroupId },
+          })
+          const itemWithCommission = orderGroup.orders[0].items[0]
+
+          expect(itemWithCommission.commission_lines).toBeDefined()
+          expect(itemWithCommission.commission_lines.length).toBeGreaterThan(0)
+
+          const commissionLine = itemWithCommission.commission_lines[0]
+          expect(commissionLine.code).toEqual("DESIGNBRIDGE_DEFAULT_15")
+          expect(commissionLine.rate).toEqual(15)
+          expect(commissionLine.amount).toEqual(1500)
         })
       })
     })
